@@ -1,4 +1,5 @@
 #MNIST Letter Recognition using a Neural Network Accelerator on FPGA#
+
 ##📌 Overview##
 This project demonstrates handwritten letter recognition using the EMNIST Letters dataset, implemented with a basic neural network accelerator on an FPGA.
 The focus of the work is algorithm-to-hardware translation and accelerating ML inference using a custom hardware architecture rather than improving model accuracy.
