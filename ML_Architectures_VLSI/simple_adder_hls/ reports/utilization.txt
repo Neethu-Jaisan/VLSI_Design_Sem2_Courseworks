@@ -1,0 +1,34 @@
+Vivado HLS Utilization Report
+-----------------------------
+
+Design Name      : adder_clk
+Tool Version     : Vivado HLS 2020.1
+Target Device    : Artix-7 (xc7a35t-cpg236-1)
+
+Resource Utilization Summary
+----------------------------
+
+Resource     Used   Available
+------------------------------
+BRAM_18K       0        100
+DSP48E         0         90
+FF             2      41600
+LUT           31      20800
+URAM           0          0
+
+Breakdown
+---------
+Expression Logic  : 16 LUTs
+Multiplexers      : 15 LUTs
+Registers         : 2 FFs
+
+Notes
+-----
+- The design uses a one-cycle latency enforced via HLS latency constraints.
+- Flip-flops are inferred in the control path (FSM).
+- The datapath (adder) is implemented as combinational logic.
+- No DSP blocks or memory resources are utilized.
+
+Status
+------
+Synthesis successful. RTL verified.
