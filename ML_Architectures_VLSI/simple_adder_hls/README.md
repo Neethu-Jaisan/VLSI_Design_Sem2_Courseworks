@@ -33,5 +33,4 @@ This design intentionally keeps the datapath combinational while enforcing
 latency through the control FSM, reflecting Vivado HLS optimization behavior.
 
 ## Author
-Neethumol  
-M.Tech VLSI Design
+Neethu Jaisan
