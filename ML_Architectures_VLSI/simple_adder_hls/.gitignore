@@ -1,0 +1,18 @@
+# Vivado / Vivado HLS junk
+*.log
+*.jou
+*.str
+*.wdb
+*.cache
+*.runs
+*.hw
+*.ip_user_files
+*.Xil
+solution*/.autopilot/
+solution*/csim/
+solution*/syn/report/
+solution*/impl/
+
+# OS
+.DS_Store
+Thumbs.db
