@@ -1,136 +1,74 @@
-# Mini Secure SoC – RTL + HLS Integration Project
+# Mini System-on-Chip (SoC) – RTL Integration Project
 
-## 📌 Project Overview
+## Overview
+This project focuses on designing and verifying a **mini System-on-Chip (SoC)** by integrating multiple RTL blocks using **Verilog/SystemVerilog**.  
+The primary goal is to understand **RTL integration, control logic, memory-mapped interfaces, and system-level functional verification**.
 
-This project implements a **Mini System-on-Chip (SoC)** integrating **handwritten RTL modules** with a **Vivado HLS–generated accelerator**, verified using **SystemVerilog layered testbench methodology** and industry-standard EDA tools.
-
-The goal is to demonstrate **end-to-end SoC design flow** — from architecture definition and RTL integration to simulation, synthesis, and basic hardware security features — in a manner aligned with **industry RTL design practices**.
-
----
-
-## 🎯 Objectives
-
-* Design a modular mini SoC using SystemVerilog RTL
-* Integrate an HLS-generated accelerator into RTL fabric
-* Implement register-based control and inter-block communication
-* Verify functionality using layered SystemVerilog testbench
-* Perform synthesis and basic timing analysis
-* Introduce lightweight hardware security mechanisms
+The project is developed as an **independent RTL integration exercise** alongside academic coursework.
 
 ---
 
-## 🧠 SoC Architecture (High-Level)
-
-**Main Components:**
-
-* SoC Top Module
-* Simple AXI-Lite–style Interconnect
-* Control & Status Register Block
-* HLS Accelerator (DSP / Compute block)
-* GPIO / Timer Peripheral
-* On-chip Memory (BRAM model)
-* Security Monitor Block
-
-**Control Model:**
-
-* Testbench acts as AXI-Lite master
-* Register-mapped communication between blocks
-* Interrupt-style signaling from accelerator
+## Project Duration
+**Dec 2025 – Jan 2026 (Ongoing)**
 
 ---
 
-## 🔧 Technology & Tools
-
-### Design & Verification
-
-* SystemVerilog (RTL + Testbench)
-* Vivado HLS (C/C++ → RTL)
-* Synopsys VCS (Simulation)
-
-### Synthesis & Analysis
-
-* Synopsys Design Compiler (Synthesis)
-* Basic Static Timing Analysis (STA awareness)
-* Conceptual Physical Design (PD awareness)
+## Key Features
+- Integration of multiple RTL blocks to form a mini SoC  
+- Register-based control and configuration  
+- Memory-mapped address decoding for peripheral access  
+- System-level functional verification using simulation  
+- Debugging through waveform analysis  
 
 ---
 
-## 🔐 Hardware Security Features
+## SoC Architecture (High-Level)
+The mini SoC consists of:
+- Top-level SoC module  
+- Control logic / FSM  
+- Address decoder for memory-mapped access  
+- Register block(s) for configuration and status  
+- Peripheral module(s) (e.g., counter / simple ALU / GPIO-style logic)  
 
-* Register access locking via key-based unlock
-* Address-range protection for accelerator access
-* Security alert flag for illegal access attempts
-
----
-
-## 🧪 Verification Strategy
-
-* Layered SystemVerilog testbench (UVM-lite style)
-* AXI-Lite interface driver & monitor
-* Scoreboard for data correctness
-* Reset, register access, data flow, and security checks
+Each peripheral is accessed through a **fixed address range**, enabling inter-block communication using read/write control signals.
 
 ---
 
-## 📂 Repository Structure
-
-```
-Mini_Secure_SoC/
-├── rtl/
-│   ├── soc_top.sv
-│   ├── interconnect.sv
-│   ├── ctrl_regs.sv
-│   ├── gpio.sv
-│   ├── memory.sv
-│   └── security_monitor.sv
-├── hls/
-│   └── accelerator.cpp
-├── tb/
-│   ├── axi_lite_if.sv
-│   ├── driver.sv
-│   ├── monitor.sv
-│   ├── scoreboard.sv
-│   └── test.sv
-├── syn/
-│   └── dc_scripts/
-├── reports/
-└── README.md
-```
+## Functional Verification
+- A system-level testbench is used to verify:
+  - Reset sequencing  
+  - Read and write transactions  
+  - Data flow between integrated blocks  
+  - Correct control signal behavior  
+- Functional issues are debugged using **waveform analysis**.
 
 ---
 
-## 📅 Project Phases
+## Tools & Technologies
+- **Languages:** Verilog / SystemVerilog  
+- **Simulation:**  
+  - Synopsys **VCS** (used during FVHDL coursework for functional verification experiments)  
+  - GTKWave / DVE for waveform viewing  
+- **Environment:** Linux (Ubuntu)
 
-1. **Architecture Definition & Register Map**
-2. RTL Backbone Implementation
-3. HLS Accelerator Development
-4. RTL + HLS Integration
-5. System-Level Verification (VCS)
-6. Synthesis & Timing Analysis
-7. Security Feature Integration & Documentation
-
----
-
-## 📄 Resume Mapping
-
-This project supports resume claims related to:
-
-* RTL integration and SoC design
-* HLS-based hardware acceleration
-* SystemVerilog verification
-* Industry EDA tool exposure
-* Hardware security fundamentals
+> **Note:** Simulation concepts and debugging methodologies learned using VCS were applied during the functional verification of this project.
 
 ---
 
-## 🧩 Future Extensions
-
-* RISC-V core integration
-* Advanced power intent (UPF)
-* Clock-domain crossing (CDC) analysis
-* Enhanced security policies
+## Project Status
+- RTL integration completed for core blocks  
+- Functional simulation in progress  
+- Additional peripherals and refinements planned  
 
 ---
 
-> **Note:** This project prioritizes architectural clarity, verification quality, and professional workflow over excessive feature complexity.
-## Owner Neethu Jaisan
+## Learning Outcomes
+- Hands-on experience with RTL integration  
+- Understanding of memory-mapped interfaces  
+- Improved debugging skills using waveforms  
+- Exposure to industry-standard simulation workflows  
+
+---
+
+## Disclaimer
+This project is intended for **learning and academic demonstration purposes** and does not target physical tapeout or full SoC implementation.
