@@ -100,7 +100,7 @@ Verification was performed by analyzing waveforms to validate control logic beha
 
 ---
 ## Results
-![GPIO write and read waveform showing rdata validity](images/wave.png)
+![GPIO write and read waveform showing rdata validity](images/wave_form.png)
 
 ## Tools Used
 - **Language:** Verilog / SystemVerilog
