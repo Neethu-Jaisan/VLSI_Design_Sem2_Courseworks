@@ -6,6 +6,8 @@
 //
 // Think of it as a "bus sniffer"
 // ------------------------------------------------------------
+`include "transaction.sv"
+
 class monitor;
 
     // --------------------------------------------------------
@@ -43,13 +45,13 @@ class monitor;
             // ------------------------------------------------
             // Detect read transaction
             // ------------------------------------------------
-            if (vif.cb.rd_en) begin
+            if (vif.rd_en) begin
 
                 // ------------------------------------------------
                 // Display observed read information
                 // ------------------------------------------------
                 $display("[%0t] READ : addr=0x%0h data=0x%0h",
-                         $time, vif.cb.addr, vif.cb.rdata);
+                         $time, vif.addr, vif.rdata);
             end
 
         end
