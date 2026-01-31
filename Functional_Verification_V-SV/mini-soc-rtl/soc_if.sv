@@ -63,8 +63,15 @@ interface soc_if (input logic clk);
     // Testbench accesses signals through clocking block
     // This is what driver/monitor will use
     // =========================================================
-    modport TB (
-        clocking cb
-    );
+modport TB (
+    clocking cb,
+    input  addr,
+    input  wdata,
+    input  wr_en,
+    input  rd_en,
+    input  rst_n,
+    input  rdata
+);
+
 
 endinterface
