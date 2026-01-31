@@ -99,6 +99,8 @@ The project includes **system-level functional verification** using **ModelSim s
 Verification was performed by analyzing waveforms to validate control logic behavior and data flow across the system.
 
 ---
+## Results
+![GPIO write and read waveform showing rdata validity](images/wave.png)
 
 ## Tools Used
 - **Language:** Verilog / SystemVerilog
