@@ -1,76 +1,137 @@
+# Mini SoC Design and System-Level Verification (SystemVerilog)
 
-# Mini System-on-Chip (SoC) – RTL Integration Project
+## Project Intention & Motivation
 
-## Overview
-This project focuses on designing and verifying a **mini System-on-Chip (SoC)** by integrating multiple RTL blocks using **Verilog/SystemVerilog**.  
-The primary goal is to understand **RTL integration, control logic, memory-mapped interfaces, and system-level functional verification**.
+Modern digital systems are rarely built as isolated hardware blocks. Instead, they are designed as **Systems-on-Chip (SoCs)**, where multiple functional blocks—control logic, peripherals, and interfaces—communicate through a common interconnect.  
+The goal of this project was to **understand and implement the core principles of an SoC** at a fundamental level, focusing on **integration, communication, and verification**, rather than complexity or protocol overhead.
 
-The project is developed as an **independent RTL integration exercise** alongside academic coursework.
-
----
-
-## Project Duration
-**Dec 2025 – Jan 2026 (Ongoing)**
+This project intentionally keeps the architecture simple to emphasize **correct design methodology**, **register-based communication**, and **system-level functional verification** using simulation.
 
 ---
 
-## Key Features
-- Integration of multiple RTL blocks to form a mini SoC  
-- Register-based control and configuration  
-- Memory-mapped address decoding for peripheral access  
-- System-level functional verification using simulation  
-- Debugging through waveform analysis  
+## What This Project Is
+
+This project implements a **mini SoC** using **Verilog/SystemVerilog**, integrating multiple RTL blocks that communicate through a **simple memory-mapped register interface**.  
+The design demonstrates how control registers, peripherals, and internal logic interact within a single SoC framework and how such a system is verified using waveform-based simulation.
 
 ---
 
-## SoC Architecture (High-Level)
-The mini SoC consists of:
-- Top-level SoC module  
-- Control logic / FSM  
-- Address decoder for memory-mapped access  
-- Register block(s) for configuration and status  
-- Peripheral module(s) (e.g., counter / simple ALU / GPIO-style logic)  
+## Core Architecture Overview
 
-Each peripheral is accessed through a **fixed address range**, enabling inter-block communication using read/write control signals.
+The mini SoC consists of the following key components:
 
----
+### 1. Control Logic
+- A memory-mapped **control register** that is written by software/testbench
+- Control bits drive the behavior of other blocks (e.g., enabling the counter)
+- Demonstrates **register-based control**
 
-## Functional Verification
-- A system-level testbench is used to verify:
-  - Reset sequencing  
-  - Read and write transactions  
-  - Data flow between integrated blocks  
-  - Correct control signal behavior  
-- Functional issues are debugged using **waveform analysis**.
+### 2. Address Decoding Logic
+- Decodes incoming addresses
+- Generates select signals for individual blocks
+- Enables **memory-mapped access** to internal registers and peripherals
 
----
+### 3. Peripheral Modules
+- **Counter Peripheral**
+  - Increments when enabled by the control register
+- **GPIO Peripheral (4-bit)**
+  - Memory-mapped output register
+  - Demonstrates basic I/O-style peripheral behavior
 
-## Tools & Technologies
-- **Languages:** Verilog / SystemVerilog  
-- **Simulation:**  
-  - Synopsys **VCS** (used during FVHDL coursework for functional verification experiments)  
-  - GTKWave / DVE for waveform viewing  
-- **Environment:** Linux (Ubuntu)
+### 4. Status Logic
+- Aggregates internal state (control and GPIO status)
+- Readable through a status register
 
-> **Note:** Simulation concepts and debugging methodologies learned using VCS were applied during the functional verification of this project.
-
----
-
-## Project Status
-- RTL integration completed for core blocks  
-- Functional simulation in progress  
-- Additional peripherals and refinements planned  
+### 5. Clock and Reset
+- Single system clock
+- Active-low reset (`rst_n`)
+- Reset sequencing verified during simulation
 
 ---
 
-## Learning Outcomes
-- Hands-on experience with RTL integration  
-- Understanding of memory-mapped interfaces  
-- Improved debugging skills using waveforms  
-- Exposure to industry-standard simulation workflows  
+## Communication Mechanism
+
+The SoC uses a **simple memory-mapped register-based communication interface**, consisting of:
+
+- `addr`  – Address bus
+- `wdata` – Write data bus
+- `rdata` – Read data bus
+- `wr_en` – Write enable
+- `rd_en` – Read enable
+
+### Read/Write Behavior
+- **Write transactions** update internal registers or peripherals using `wdata`
+- **Read transactions** return data on `rdata` when `rd_en` is asserted
+- `rdata` is only valid during active read cycles
+
+This approach represents the **most fundamental form of SoC communication**, commonly used as the basis for more advanced protocols such as APB or AXI.
 
 ---
 
-## Disclaimer
-This project is intended for **learning and academic demonstration purposes** and does not target physical tapeout or full SoC implementation.
+## Inter-Block Communication
+
+Inter-block communication in this SoC is achieved through **register-level interactions**, including:
+
+- Control register enabling the counter peripheral
+- GPIO output reflected in the status register
+- Address decoding routing transactions to the correct block
+
+This demonstrates **true SoC behavior**, where blocks are not isolated but coordinated through shared control and data paths.
+
+---
+
+## Verification Strategy
+
+The project includes **system-level functional verification** using **ModelSim simulation**.
+
+### Verification Focus Areas
+- Reset sequencing and initialization
+- Correct address decoding
+- Write → internal state update → readback correctness
+- Inter-block interaction (control → counter, GPIO → status)
+- Peripheral read/write behavior
+
+### Testbench Features
+- SystemVerilog interface with clocking block
+- Driver and monitor components
+- Directed test sequences
+- Waveform-based debugging
+
+Verification was performed by analyzing waveforms to validate control logic behavior and data flow across the system.
+
+---
+
+## Tools Used
+- **Language:** Verilog / SystemVerilog
+- **Simulation Tool:** ModelSim (Questa-FPGA Starter Edition)
+
+---
+
+## Project Scope Clarification
+
+This project intentionally does **not** include:
+- AXI/APB protocols
+- UVM-based verification
+- Coverage closure
+- FPGA implementation
+
+The focus is on **fundamental SoC concepts**, correctness, and clarity.
+
+---
+
+## Key Learning Outcomes
+
+- Understanding the structure and components of an SoC
+- Implementing memory-mapped communication
+- Designing register-based control logic
+- Integrating and verifying peripheral modules
+- Performing system-level functional verification using simulation
+- Debugging hardware behavior through waveform analysis
+
+---
+
+## Conclusion
+
+This mini SoC project demonstrates how multiple RTL blocks can be integrated into a cohesive system using simple, well-defined communication mechanisms. By focusing on clarity and correctness, the project provides a solid foundation for understanding larger and more complex SoC architectures and verification methodologies.
+
+---
 
