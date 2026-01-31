@@ -19,19 +19,17 @@ module soc_tb;
     // Initialize clock
     initial clk = 0;
 
-    // Toggle clock every 5 time units (100 MHz if time unit = 1ns)
+    // Toggle clock every 5 time units
     always #5 clk = ~clk;
 
     // --------------------------------------------------------
     // Interface instantiation
     // --------------------------------------------------------
-    // Clock is passed into interface
     soc_if sif(clk);
 
     // --------------------------------------------------------
     // DUT instantiation
     // --------------------------------------------------------
-    // Connect DUT using DUT modport
     soc_top dut (
         .sif(sif)
     );
@@ -77,24 +75,37 @@ module soc_tb;
             mon.observe();
         join_none
 
-        // -----------------------------------------------
-        // WRITE transaction: enable counter
-        // -----------------------------------------------
-        tr.addr  = 8'h00;        // Control register address
+        // =================================================
+        // TEST 1: Enable counter via control register
+        // =================================================
+        tr.addr  = 8'h00;        // Control register
         tr.data  = 32'h1;        // Enable bit
-        tr.write = 1'b1;         // Write operation
+        tr.write = 1'b1;
         drv.drive(tr);
 
-        // -----------------------------------------------
-        // Wait few cycles for counter to increment
-        // -----------------------------------------------
+        // Wait few cycles for counter increment
         repeat (5) @(posedge clk);
 
-        // -----------------------------------------------
-        // READ transaction: read counter
-        // -----------------------------------------------
-        tr.addr  = 8'h08;        // Counter register address
-        tr.write = 1'b0;         // Read operation
+        // =================================================
+        // TEST 2: Read counter value
+        // =================================================
+        tr.addr  = 8'h08;        // Counter register
+        tr.write = 1'b0;
+        drv.drive(tr);
+
+        // =================================================
+        // TEST 3: GPIO write
+        // =================================================
+        tr.addr  = 8'h0C;        // GPIO register
+        tr.data  = 32'hA;        // 4'b1010
+        tr.write = 1'b1;
+        drv.drive(tr);
+
+        // =================================================
+        // TEST 4: GPIO readback
+        // =================================================
+        tr.addr  = 8'h0C;        // GPIO register
+        tr.write = 1'b0;
         drv.drive(tr);
 
         // -----------------------------------------------
