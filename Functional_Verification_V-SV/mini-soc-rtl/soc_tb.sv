@@ -9,6 +9,10 @@
 // - Applies reset
 // - Sends transactions
 // ------------------------------------------------------------
+`include "transaction.sv"
+`include "driver.sv"
+`include "monitor.sv"
+
 module soc_tb;
 
     // --------------------------------------------------------
@@ -20,7 +24,7 @@ module soc_tb;
     initial clk = 0;
 
     // Toggle clock every 5 time units
-    always #5 clk = ~clk;
+    always #50 clk = ~clk;
 
     // --------------------------------------------------------
     // Interface instantiation
@@ -49,17 +53,17 @@ module soc_tb;
         // -----------------------------------------------
         // Initialize interface signals
         // -----------------------------------------------
-        sif.cb.addr  = '0;
-        sif.cb.wdata = '0;
-        sif.cb.wr_en = 0;
-        sif.cb.rd_en = 0;
-        sif.cb.rst_n = 0;   // Assert reset
+        sif.cb.addr  <= '0;
+        sif.cb.wdata <= '0;
+        sif.cb.wr_en <= 1'b0;
+        sif.cb.rd_en <= 1'b0;
+        sif.cb.rst_n <= 1'b0;   // Assert reset
 
         // Hold reset for few cycles
         repeat (2) @(posedge clk);
 
         // Deassert reset
-        sif.cb.rst_n = 1;
+        sif.cb.rst_n <= 1'b1;
 
         // -----------------------------------------------
         // Create class objects
@@ -97,7 +101,7 @@ module soc_tb;
         // TEST 3: GPIO write
         // =================================================
         tr.addr  = 8'h0C;        // GPIO register
-        tr.data  = 32'hA;        // 4'b1010
+        tr.data  = 32'h97EA;        // 'd38890
         tr.write = 1'b1;
         drv.drive(tr);
 
