@@ -24,6 +24,9 @@ module soc_top (
     // Counter register (simple peripheral)
     logic [31:0] counter_reg;
 
+    // GPIO output register (4-bit peripheral)
+    logic [3:0] gpio_out;
+
     // --------------------------------------------------------
     // Address decode signals
     // --------------------------------------------------------
@@ -31,6 +34,7 @@ module soc_top (
     logic sel_ctrl;
     logic sel_status;
     logic sel_counter;
+    logic sel_gpio;
 
     // --------------------------------------------------------
     // Address Decoder (Combinational Logic)
@@ -43,12 +47,14 @@ module soc_top (
         sel_ctrl    = 1'b0;
         sel_status  = 1'b0;
         sel_counter = 1'b0;
+        sel_gpio    = 1'b0;
 
         // Decode based on address
         case (sif.addr)
             8'h00: sel_ctrl    = 1'b1; // Control register
             8'h04: sel_status  = 1'b1; // Status register
             8'h08: sel_counter = 1'b1; // Counter register
+            8'h0C: sel_gpio    = 1'b1; // GPIO register
             default: ; // No match
         endcase
     end
@@ -61,9 +67,9 @@ module soc_top (
     // --------------------------------------------------------
     always_ff @(posedge sif.clk or negedge sif.rst_n) begin
         if (!sif.rst_n)
-            ctrl_reg <= 32'h0;                 // Reset value
+            ctrl_reg <= 32'h0;                 
         else if (sif.wr_en && sel_ctrl)
-            ctrl_reg <= sif.wdata;             // Write operation
+            ctrl_reg <= sif.wdata;             
     end
 
     // --------------------------------------------------------
@@ -74,20 +80,35 @@ module soc_top (
     // --------------------------------------------------------
     always_ff @(posedge sif.clk or negedge sif.rst_n) begin
         if (!sif.rst_n)
-            counter_reg <= 32'h0;               // Reset counter
+            counter_reg <= 32'h0;               
         else if (ctrl_reg[0])
-            counter_reg <= counter_reg + 1'b1; // Increment
+            counter_reg <= counter_reg + 1'b1; 
+    end
+
+    // --------------------------------------------------------
+    // GPIO Peripheral Logic (Sequential)
+    // --------------------------------------------------------
+    // - 4-bit GPIO output register
+    // - Written through memory-mapped interface
+    // --------------------------------------------------------
+    always_ff @(posedge sif.clk or negedge sif.rst_n) begin
+        if (!sif.rst_n)
+            gpio_out <= 4'b0000;
+        else if (sif.wr_en && sel_gpio)
+            gpio_out <= sif.wdata[3:0];
     end
 
     // --------------------------------------------------------
     // Status Register Logic (Combinational)
     // --------------------------------------------------------
     // Status reflects internal signals
-    // Here: bit[0] shows whether counter is enabled
+    // bit[0] : counter enable
+    // bit[4:1] : GPIO state
     // --------------------------------------------------------
     always_comb begin
-        status_reg = 32'h0;        // Default
-        status_reg[0] = ctrl_reg[0];
+        status_reg = 32'h0;
+        status_reg[0]   = ctrl_reg[0];
+        status_reg[4:1] = gpio_out;
     end
 
     // --------------------------------------------------------
@@ -96,7 +117,7 @@ module soc_top (
     // Routes selected register data onto rdata bus
     // --------------------------------------------------------
     always_comb begin
-        sif.rdata = 32'h0;         // Default read value
+        sif.rdata = 32'h0;
 
         if (sif.rd_en) begin
             if (sel_ctrl)
@@ -105,6 +126,8 @@ module soc_top (
                 sif.rdata = status_reg;
             else if (sel_counter)
                 sif.rdata = counter_reg;
+            else if (sel_gpio)
+                sif.rdata = {28'h0, gpio_out};
         end
     end
 
