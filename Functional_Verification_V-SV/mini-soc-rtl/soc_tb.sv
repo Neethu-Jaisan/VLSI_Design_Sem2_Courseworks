@@ -23,7 +23,7 @@ module soc_tb;
     // Initialize clock
     initial clk = 0;
 
-    // Toggle clock every 5 time units
+    // Toggle clock every 50 time units
     always #50 clk = ~clk;
 
     // --------------------------------------------------------
