@@ -1,0 +1,15 @@
+INPUT(A)
+INPUT(B)
+
+OUTPUT(D0)
+OUTPUT(D1)
+OUTPUT(D2)
+OUTPUT(D3)
+
+nA = NOT(A)
+nB = NOT(B)
+
+D0 = AND(nA, nB)
+D1 = AND(nA, B)
+D2 = AND(A, nB)
+D3 = AND(A, B)

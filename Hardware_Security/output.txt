@@ -1,0 +1,256 @@
+PS C:\Users\neeth\OneDrive\Desktop\AmritaCBE\S2\HSDT\MERO> python mero_descision.py
+
+Circuit Loaded Successfully
+Inputs : ['1', '2', '3', '6', '7']
+Outputs: ['22', '23']
+Total Gates: 6
+
+All Node Probabilities
+------------------------------------------------------------
+     1  P(1) = 0.5000   P(0) = 0.5000
+     2  P(1) = 0.5000   P(0) = 0.5000
+     3  P(1) = 0.5000   P(0) = 0.5000
+     6  P(1) = 0.5000   P(0) = 0.5000
+     7  P(1) = 0.5000   P(0) = 0.5000
+    10  P(1) = 0.7500   P(0) = 0.2500
+    11  P(1) = 0.7500   P(0) = 0.2500
+    16  P(1) = 0.6250   P(0) = 0.3750
+    19  P(1) = 0.6250   P(0) = 0.3750
+    22  P(1) = 0.5312   P(0) = 0.4688
+    23  P(1) = 0.6094   P(0) = 0.3906
+
+Suggested Threshold Values
+------------------------------------------------------------
+25th Percentile = 0.281
+Median          = 0.375
+
+Enter theta (press Enter to use 25th percentile): 0.1
+Using Theta = 0.1
+
+Enter required activation count N: 100
+Using N = 100
+
+Rare Nodes Detected
+------------------------------------------------------------
+No rare nodes detected.
+PS C:\Users\neeth\OneDrive\Desktop\AmritaCBE\S2\HSDT\MERO> python mero_tool.py      
+Enter BENCH file name (e.g., c17.bench): c17.bench
+
+Circuit Loaded Successfully
+Inputs : ['1', '2', '3', '6', '7']
+Outputs: ['22', '23']
+Total Gates: 6
+
+All Node Probabilities
+------------------------------------------------------------
+     1  P(1) = 0.5000   P(0) = 0.5000
+     2  P(1) = 0.5000   P(0) = 0.5000
+     3  P(1) = 0.5000   P(0) = 0.5000
+     6  P(1) = 0.5000   P(0) = 0.5000
+     7  P(1) = 0.5000   P(0) = 0.5000
+    10  P(1) = 0.7500   P(0) = 0.2500
+    11  P(1) = 0.7500   P(0) = 0.2500
+    16  P(1) = 0.6250   P(0) = 0.3750
+    19  P(1) = 0.6250   P(0) = 0.3750
+    22  P(1) = 0.5312   P(0) = 0.4688
+    23  P(1) = 0.6094   P(0) = 0.3906
+
+Suggested Threshold Values
+------------------------------------------------------------
+25th Percentile = 0.281
+Median          = 0.375
+
+Enter theta (press Enter to use 25th percentile):
+Using Theta = 0.281
+
+Enter required activation count N: 1000
+Using N = 1000
+
+Rare Nodes Detected
+------------------------------------------------------------
+    10  Rare Value = 0   Probability = 0.250000
+    11  Rare Value = 0   Probability = 0.250000
+
+Trojan Trigger Construction
+------------------------------------------------------------
+Estimated Joint Trigger Probability = 0.0625
+
+Individual Activation Requirement
+------------------------------------------------------------
+    10  p = 0.250000  -->  T >= 4000
+    11  p = 0.250000  -->  T >= 4000
+
+Required T (Individual Guarantee) >= 4000
+
+Simultaneous Activation Requirement
+------------------------------------------------------------
+T >= 16000
+Expected Trigger Activations at T = 1000.0
+
+Program Completed Successfully.
+PS C:\Users\neeth\OneDrive\Desktop\AmritaCBE\S2\HSDT\MERO> python mero_tool.py
+Enter BENCH file name (e.g., c17.bench): decoder2x4.bench
+
+Circuit Loaded Successfully
+Inputs : ['A', 'B']
+Outputs: ['D0', 'D1', 'D2', 'D3']
+Total Gates: 6
+
+All Node Probabilities
+------------------------------------------------------------
+     A  P(1) = 0.5000   P(0) = 0.5000
+     B  P(1) = 0.5000   P(0) = 0.5000
+    nA  P(1) = 0.5000   P(0) = 0.5000
+    nB  P(1) = 0.5000   P(0) = 0.5000
+    D0  P(1) = 0.2500   P(0) = 0.7500
+    D1  P(1) = 0.2500   P(0) = 0.7500
+    D2  P(1) = 0.2500   P(0) = 0.7500
+    D3  P(1) = 0.2500   P(0) = 0.7500
+
+Suggested Threshold Values
+------------------------------------------------------------
+25th Percentile = 0.25
+Median          = 0.25
+
+Enter theta (press Enter to use 25th percentile):
+Using Theta = 0.25
+
+Enter required activation count N: 1000
+Using N = 1000
+
+Rare Nodes Detected
+------------------------------------------------------------
+    D0  Rare Value = 1   Probability = 0.250000
+    D1  Rare Value = 1   Probability = 0.250000
+    D2  Rare Value = 1   Probability = 0.250000
+    D3  Rare Value = 1   Probability = 0.250000
+
+Trojan Trigger Construction
+------------------------------------------------------------
+Estimated Joint Trigger Probability = 0.003906
+
+Individual Activation Requirement
+------------------------------------------------------------
+    D0  p = 0.250000  -->  T >= 4000
+    D1  p = 0.250000  -->  T >= 4000
+    D2  p = 0.250000  -->  T >= 4000
+    D3  p = 0.250000  -->  T >= 4000
+
+Required T (Individual Guarantee) >= 4000
+
+Simultaneous Activation Requirement
+------------------------------------------------------------
+T >= 256000
+Expected Trigger Activations at T = 1000.0
+
+Program Completed Successfully.
+PS C:\Users\neeth\OneDrive\Desktop\AmritaCBE\S2\HSDT\MERO> python mero_tool.py
+Enter BENCH file name (e.g., c17.bench): c432.bench
+
+Circuit Loaded Successfully
+Inputs : ['1', '4', '8', '11', '14', '17', '21', '24', '27', '30', '34', '37', '40', '43', '47', '50', '53', '56', '60', '63', '66', '69', '73', '76', '79', '82', '86', '89', '92', '95', '99', '102', '105', '108', '112', '115']
+Outputs: ['223', '329', '370', '421', '430', '431', '432']
+Total Gates: 25
+
+All Node Probabilities
+------------------------------------------------------------
+     1  P(1) = 0.5000   P(0) = 0.5000
+     4  P(1) = 0.5000   P(0) = 0.5000
+     8  P(1) = 0.5000   P(0) = 0.5000
+    11  P(1) = 0.5000   P(0) = 0.5000
+    14  P(1) = 0.5000   P(0) = 0.5000
+    17  P(1) = 0.5000   P(0) = 0.5000
+    21  P(1) = 0.5000   P(0) = 0.5000
+    24  P(1) = 0.5000   P(0) = 0.5000
+    27  P(1) = 0.5000   P(0) = 0.5000
+    30  P(1) = 0.5000   P(0) = 0.5000
+    34  P(1) = 0.5000   P(0) = 0.5000
+    37  P(1) = 0.5000   P(0) = 0.5000
+    40  P(1) = 0.5000   P(0) = 0.5000
+    43  P(1) = 0.5000   P(0) = 0.5000
+    47  P(1) = 0.5000   P(0) = 0.5000
+    50  P(1) = 0.5000   P(0) = 0.5000
+    53  P(1) = 0.5000   P(0) = 0.5000
+    56  P(1) = 0.5000   P(0) = 0.5000
+    60  P(1) = 0.5000   P(0) = 0.5000
+    63  P(1) = 0.5000   P(0) = 0.5000
+    66  P(1) = 0.5000   P(0) = 0.5000
+    69  P(1) = 0.5000   P(0) = 0.5000
+    73  P(1) = 0.5000   P(0) = 0.5000
+    76  P(1) = 0.5000   P(0) = 0.5000
+    79  P(1) = 0.5000   P(0) = 0.5000
+    82  P(1) = 0.5000   P(0) = 0.5000
+    86  P(1) = 0.5000   P(0) = 0.5000
+    89  P(1) = 0.5000   P(0) = 0.5000
+    92  P(1) = 0.5000   P(0) = 0.5000
+    95  P(1) = 0.5000   P(0) = 0.5000
+    99  P(1) = 0.5000   P(0) = 0.5000
+   102  P(1) = 0.5000   P(0) = 0.5000
+   105  P(1) = 0.5000   P(0) = 0.5000
+   108  P(1) = 0.5000   P(0) = 0.5000
+   112  P(1) = 0.5000   P(0) = 0.5000
+   115  P(1) = 0.5000   P(0) = 0.5000
+   118  P(1) = 0.7500   P(0) = 0.2500
+   119  P(1) = 0.7500   P(0) = 0.2500
+   120  P(1) = 0.2500   P(0) = 0.7500
+   121  P(1) = 0.7500   P(0) = 0.2500
+   122  P(1) = 0.7500   P(0) = 0.2500
+   123  P(1) = 0.2500   P(0) = 0.7500
+   124  P(1) = 0.7500   P(0) = 0.2500
+   125  P(1) = 0.7500   P(0) = 0.2500
+   126  P(1) = 0.7500   P(0) = 0.2500
+   127  P(1) = 0.2500   P(0) = 0.7500
+   128  P(1) = 0.7500   P(0) = 0.2500
+   129  P(1) = 0.7500   P(0) = 0.2500
+   130  P(1) = 0.7500   P(0) = 0.2500
+   131  P(1) = 0.2500   P(0) = 0.7500
+   132  P(1) = 0.7500   P(0) = 0.2500
+   133  P(1) = 0.7500   P(0) = 0.2500
+   134  P(1) = 0.7500   P(0) = 0.2500
+   135  P(1) = 0.2500   P(0) = 0.7500
+   223  P(1) = 0.4375   P(0) = 0.5625
+   329  P(1) = 0.8125   P(0) = 0.1875
+   370  P(1) = 0.8125   P(0) = 0.1875
+   421  P(1) = 0.4375   P(0) = 0.5625
+   430  P(1) = 0.8125   P(0) = 0.1875
+   431  P(1) = 0.4375   P(0) = 0.5625
+   432  P(1) = 0.8125   P(0) = 0.1875
+
+Suggested Threshold Values
+------------------------------------------------------------
+25th Percentile = 0.25
+Median          = 0.25
+
+Enter theta (press Enter to use 25th percentile): 0.20
+Using Theta = 0.2
+
+Enter required activation count N: 1000
+Using N = 1000
+
+Rare Nodes Detected
+------------------------------------------------------------
+   329  Rare Value = 0   Probability = 0.187500
+   370  Rare Value = 0   Probability = 0.187500
+   430  Rare Value = 0   Probability = 0.187500
+   432  Rare Value = 0   Probability = 0.187500
+
+Trojan Trigger Construction
+------------------------------------------------------------
+Estimated Joint Trigger Probability = 0.001236
+
+Individual Activation Requirement
+------------------------------------------------------------
+   329  p = 0.187500  -->  T >= 5334
+   370  p = 0.187500  -->  T >= 5334
+   430  p = 0.187500  -->  T >= 5334
+   432  p = 0.187500  -->  T >= 5334
+
+Required T (Individual Guarantee) >= 5334
+
+Simultaneous Activation Requirement
+------------------------------------------------------------
+T >= 809087
+Expected Trigger Activations at T = 1000.0
+
+Program Completed Successfully.
+PS C:\Users\neeth\OneDrive\Desktop\AmritaCBE\S2\HSDT\MERO> 
