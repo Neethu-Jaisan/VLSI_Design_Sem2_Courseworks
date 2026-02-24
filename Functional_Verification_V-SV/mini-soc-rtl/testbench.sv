@@ -1,61 +1,52 @@
 // ============================================================
 // testbench.sv
 // Final Stable Mini SoC Layered Testbench
-// Demonstrates layered verification using:
-// - Constrained random stimulus
-// - Mailbox communication
-// - Semaphore control
-// - Event signaling
-// - Reference-model scoreboard
 // ============================================================
 
-`timescale 1ns/1ns   // Time unit = 1ns, precision = 1ns
+`timescale 1ns/1ns
 
 module tb;
 
   // ----------------------------------------------------------
-  // Clock Generation
+  // Clock
   // ----------------------------------------------------------
-  bit clk = 0;                 // Declare simulation clock
-  always #5 clk = ~clk;        // Toggle every 5ns → 10ns period → 100MHz
+  bit clk = 0;
+  always #5 clk = ~clk;
 
   // ----------------------------------------------------------
-  // Interface Instance
+  // Interface
   // ----------------------------------------------------------
-  soc_if vif(clk);             // Instantiate interface and pass clock
+  soc_if vif(clk);
 
   // ----------------------------------------------------------
-  // DUT Instance
+  // DUT
   // ----------------------------------------------------------
   mini_soc dut(
-    .clk   (clk),              // Connect system clock
-    .rst_n (vif.rst_n),        // Connect reset
-    .addr  (vif.addr),         // Address bus
-    .wdata (vif.wdata),        // Write data bus
-    .wr_en (vif.wr_en),        // Write enable
-    .rd_en (vif.rd_en),        // Read enable
-    .rdata (vif.rdata)         // Read data bus
+    .clk   (clk),
+    .rst_n (vif.rst_n),
+    .addr  (vif.addr),
+    .wdata (vif.wdata),
+    .wr_en (vif.wr_en),
+    .rd_en (vif.rd_en),
+    .rdata (vif.rdata)
   );
 
   // ==========================================================
-  // Transaction Class
-  // Represents one bus transaction
+  // Transaction
   // ==========================================================
 
   class soc_txn;
 
-    rand bit [7:0]  addr;      // Memory-mapped address
-    rand bit [31:0] wdata;     // Write data
-    rand bit        wr_en;     // Write enable
-    rand bit        rd_en;     // Read enable
+    rand bit [7:0]  addr;
+    rand bit [31:0] wdata;
+    rand bit        wr_en;
+    rand bit        rd_en;
 
-    // Constraint: cannot read and write simultaneously
     constraint valid_rw {
-      !(wr_en && rd_en);       // Disallow both active
-      wr_en || rd_en;          // At least one must be active
+      !(wr_en && rd_en);
+      wr_en || rd_en;
     }
 
-    // Constraint: restrict address to valid register map
     constraint valid_addr {
       addr inside {8'h00,8'h04,8'h08,8'h0C};
     }
@@ -65,23 +56,22 @@ module tb;
 
   // ==========================================================
   // Generator
-  // Creates random transactions
   // ==========================================================
 
   class generator;
 
-    mailbox #(soc_txn) gen2drv;    // Mailbox to send transactions to driver
+    mailbox #(soc_txn) gen2drv;
 
     function new(mailbox #(soc_txn) m);
-      gen2drv = m;                 // Store mailbox handle
+      gen2drv = m;
     endfunction
 
     task run();
       soc_txn tx;
-      repeat(30) begin             // Generate 30 transactions
-        tx = new();                // Create new transaction object
-        assert(tx.randomize());    // Randomize using constraints
-        gen2drv.put(tx);           // Send transaction to driver
+      repeat(30) begin
+        tx = new();
+        assert(tx.randomize());
+        gen2drv.put(tx);
       end
     endtask
 
@@ -90,15 +80,14 @@ module tb;
 
   // ==========================================================
   // Driver
-  // Drives transactions onto DUT interface
   // ==========================================================
 
   class driver;
 
-    virtual soc_if vif;            // Virtual interface handle
-    mailbox #(soc_txn) gen2drv;    // Mailbox from generator
-    semaphore bus_lock;            // Controls bus access
-    event tx_done;                 // Signals transaction completion
+    virtual soc_if vif;
+    mailbox #(soc_txn) gen2drv;
+    semaphore bus_lock;
+    event tx_done;
 
     function new(virtual soc_if vif,
                  mailbox #(soc_txn) m,
@@ -114,25 +103,23 @@ module tb;
       soc_txn tx;
 
       forever begin
-        gen2drv.get(tx);           // Wait and receive transaction
+        gen2drv.get(tx);
 
-        bus_lock.get();            // Acquire bus access
+        bus_lock.get();
 
-        // Drive signals using clocking block
         vif.cb.addr  <= tx.addr;
         vif.cb.wdata <= tx.wdata;
         vif.cb.wr_en <= tx.wr_en;
         vif.cb.rd_en <= tx.rd_en;
 
-        @(vif.cb);                 // Wait one clock cycle
+        @(vif.cb);
 
-        // Deassert control signals after one cycle
         vif.cb.wr_en <= 0;
         vif.cb.rd_en <= 0;
 
-        bus_lock.put();            // Release bus
+        bus_lock.put();
 
-        -> tx_done;                // Trigger completion event
+        -> tx_done;
       end
     endtask
 
@@ -141,13 +128,12 @@ module tb;
 
   // ==========================================================
   // Monitor
-  // Observes DUT activity (passive component)
   // ==========================================================
 
   class monitor;
 
-    virtual soc_if vif;            // Virtual interface handle
-    mailbox #(soc_txn) mon2sb;     // Mailbox to scoreboard
+    virtual soc_if vif;
+    mailbox #(soc_txn) mon2sb;
 
     function new(virtual soc_if vif,
                  mailbox #(soc_txn) m);
@@ -159,13 +145,13 @@ module tb;
       soc_txn tx;
 
       forever begin
-        @(posedge vif.clk);        // Sample at clock edge
+        @(posedge vif.clk);
 
-        if(vif.rd_en) begin        // Capture read transactions only
+        if(vif.rd_en) begin
           tx = new();
-          tx.addr  = vif.addr;     // Store read address
-          tx.wdata = vif.rdata;    // Store read data
-          mon2sb.put(tx);          // Send to scoreboard
+          tx.addr  = vif.addr;
+          tx.wdata = vif.rdata;
+          mon2sb.put(tx);
         end
       end
     endtask
@@ -174,20 +160,18 @@ module tb;
 
 
   // ==========================================================
-  // Scoreboard
-  // RTL-Accurate Reference Model
+  // Scoreboard (RTL-Accurate Model)
   // ==========================================================
 
   class scoreboard;
 
-    mailbox #(soc_txn) mon2sb;     // Input from monitor
-    virtual soc_if vif;            // Interface access
+    mailbox #(soc_txn) mon2sb;
+    virtual soc_if vif;
 
-    // Reference model registers
     bit [31:0] model_control;
     bit [3:0]  model_gpio;
     bit [31:0] model_counter;
-    bit        prev_enable;        // Stores previous cycle enable
+    bit        prev_enable;
 
     function new(mailbox #(soc_txn) m,
                  virtual soc_if vif);
@@ -208,21 +192,27 @@ module tb;
       forever begin
         @(posedge vif.clk);
 
-        // ------------------------------
-        // 1. Check Read Transactions
-        // ------------------------------
+        // ------------------------------------
+        //  CHECK READS FIRST
+        // ------------------------------------
         if(mon2sb.num() > 0) begin
           mon2sb.get(tx);
 
           case(tx.addr)
+
             8'h00: expected = model_control;
+
             8'h04: expected = {28'b0, model_gpio};
+
             8'h08: expected = model_counter;
+
             8'h0C: expected = {24'b0,
                                model_gpio,
                                model_control[0],
                                3'b0};
+
             default: expected = 32'h0;
+
           endcase
 
           $display("Read Addr=%0h Data=%0h",
@@ -234,9 +224,9 @@ module tb;
           end
         end
 
-        // ------------------------------
-        // 2. Mirror Write Transactions
-        // ------------------------------
+        // ------------------------------------
+        //  TRACK WRITES
+        // ------------------------------------
         if(vif.wr_en) begin
           case(vif.addr)
             8'h00: model_control = vif.wdata;
@@ -244,10 +234,9 @@ module tb;
           endcase
         end
 
-        // ------------------------------
-        // 3. Cycle-Accurate Counter Model
-        // Matches nonblocking behavior
-        // ------------------------------
+        // ------------------------------------
+        //  RTL-ACCURATE COUNTER UPDATE
+        // ------------------------------------
         if(prev_enable)
           model_counter++;
 
@@ -262,7 +251,6 @@ module tb;
 
   // ==========================================================
   // Environment
-  // Connects all components
   // ==========================================================
 
   class environment;
@@ -281,7 +269,7 @@ module tb;
 
       gen2drv = new();
       mon2sb  = new();
-      bus_lock = new(1);       // Single access semaphore
+      bus_lock = new(1);
 
       gen = new(gen2drv);
       drv = new(vif, gen2drv, bus_lock, tx_done);
@@ -292,10 +280,10 @@ module tb;
 
     task run();
       fork
-        gen.run();   // Start generator
-        drv.run();   // Start driver
-        mon.run();   // Start monitor
-        sb.run();    // Start scoreboard
+        gen.run();
+        drv.run();
+        mon.run();
+        sb.run();
       join_none
     endtask
 
@@ -303,24 +291,22 @@ module tb;
 
 
   // ==========================================================
-  // Test Block
+  // TEST
   // ==========================================================
 
   initial begin
 
     environment env;
 
-    // Apply reset
     vif.rst_n = 0;
     repeat(5) @(posedge clk);
     vif.rst_n = 1;
 
-    // Create and start environment
     env = new(vif);
     env.run();
 
-    #1000;           // Run simulation for 1000ns
-    $finish;         // End simulation
+    #1000;
+    $finish;
 
   end
 
