@@ -1,139 +1,144 @@
-# Mini SoC Design and System-Level Verification (SystemVerilog)
+# Mini SoC Design and Layered SystemVerilog Verification
 
-## Project Intention & Motivation
+## Overview
 
-Modern digital systems are rarely built as isolated hardware blocks. Instead, they are designed as **Systems-on-Chip (SoCs)**, where multiple functional blocks—control logic, peripherals, and interfaces—communicate through a common interconnect.  
-The goal of this project was to **understand and implement the core principles of an SoC** at a fundamental level, focusing on **integration, communication, and verification**, rather than complexity or protocol overhead.
+This project implements a simplified memory-mapped Mini SoC in SystemVerilog along with a structured layered testbench.
 
-This project intentionally keeps the architecture simple to emphasize **correct design methodology**, **register-based communication**, and **system-level functional verification** using simulation.
+The goal is to demonstrate:
 
----
+- Register-based SoC architecture
+- Inter-block communication
+- Constrained random verification
+- Layered testbench design (Generator → Driver → Monitor → Scoreboard)
+- Cycle-accurate reference model checking
 
-## What This Project Is
-
-This project implements a **mini SoC** using **Verilog/SystemVerilog**, integrating multiple RTL blocks that communicate through a **simple memory-mapped register interface**.  
-The design demonstrates how control registers, peripherals, and internal logic interact within a single SoC framework and how such a system is verified using waveform-based simulation.
-
----
-
-## Core Architecture Overview
-
-The mini SoC consists of the following key components:
-
-### 1. Control Logic
-- A memory-mapped **control register** that is written by software/testbench
-- Control bits drive the behavior of other blocks (e.g., enabling the counter)
-- Demonstrates **register-based control**
-
-### 2. Address Decoding Logic
-- Decodes incoming addresses
-- Generates select signals for individual blocks
-- Enables **memory-mapped access** to internal registers and peripherals
-
-### 3. Peripheral Modules
-- **Counter Peripheral**
-  - Increments when enabled by the control register
-- **GPIO Peripheral (4-bit)**
-  - Memory-mapped output register
-  - Demonstrates basic I/O-style peripheral behavior
-
-### 4. Status Logic
-- Aggregates internal state (control and GPIO status)
-- Readable through a status register
-
-### 5. Clock and Reset
-- Single system clock
-- Active-low reset (`rst_n`)
-- Reset sequencing verified during simulation
+The focus is clarity, correctness, and methodology rather than protocol complexity.
 
 ---
 
-## Communication Mechanism
+# Design Architecture
 
-The SoC uses a **simple memory-mapped register-based communication interface**, consisting of:
+## Memory Map
 
-- `addr`  – Address bus
-- `wdata` – Write data bus
-- `rdata` – Read data bus
-- `wr_en` – Write enable
-- `rd_en` – Read enable
-
-### Read/Write Behavior
-- **Write transactions** update internal registers or peripherals using `wdata`
-- **Read transactions** return data on `rdata` when `rd_en` is asserted
-- `rdata` is only valid during active read cycles
-
-This approach represents the **most fundamental form of SoC communication**, commonly used as the basis for more advanced protocols such as APB or AXI.
+| Address | Register         | Description                         |
+|----------|-----------------|-------------------------------------|
+| 0x00     | Control Register| Bit[0] enables counter              |
+| 0x04     | GPIO Register   | 4-bit memory-mapped output          |
+| 0x08     | Counter Register| Increments when enabled             |
+| 0x0C     | Status Register | Aggregated GPIO + Control status    |
 
 ---
 
-## Inter-Block Communication
+## Internal Blocks
 
-Inter-block communication in this SoC is achieved through **register-level interactions**, including:
+### 1. Control Register
+- Written through memory-mapped interface
+- Bit[0] controls counter enable
 
-- Control register enabling the counter peripheral
-- GPIO output reflected in the status register
-- Address decoding routing transactions to the correct block
+### 2. GPIO Peripheral
+- 4-bit output register
+- Writable and readable
 
-This demonstrates **true SoC behavior**, where blocks are not isolated but coordinated through shared control and data paths.
+### 3. Counter Peripheral
+- Sequential logic
+- Increments every clock when enabled
 
----
-
-## Verification Strategy
-
-The project includes **system-level functional verification** using **ModelSim simulation**.
-
-### Verification Focus Areas
-- Reset sequencing and initialization
-- Correct address decoding
-- Write → internal state update → readback correctness
-- Inter-block interaction (control → counter, GPIO → status)
-- Peripheral read/write behavior
-
-### Testbench Features
-- SystemVerilog interface with clocking block
-- Driver and monitor components
-- Directed test sequences
-- Waveform-based debugging
-
-Verification was performed by analyzing waveforms to validate control logic behavior and data flow across the system.
-
----
-## Results
-![GPIO write and read waveform showing rdata validity](https://github.com/Neethu-Jaisan/VLSI_Design_Sem2_Courseworks/blob/main/Functional_Verification_V-SV/mini-soc-rtl/wave_form.png)
-
-## Tools Used
-- **Language:** Verilog / SystemVerilog
-- **Simulation Tool:** ModelSim (Questa-FPGA Starter Edition)
+### 4. Status Register
+- Combinational aggregation of internal state
 
 ---
 
-## Project Scope Clarification
+# Verification Architecture
 
-This project intentionally does **not** include:
-- AXI/APB protocols
-- UVM-based verification
-- Coverage closure
-- FPGA implementation
+Layered SystemVerilog testbench:
+Generator → Driver → DUT → Monitor → Scoreboard
 
-The focus is on **fundamental SoC concepts**, correctness, and clarity.
+## Components
+
+### Transaction
+- Constrained random generation
+- Valid read/write combinations only
+- Restricted to valid address map
+
+### Generator
+- Produces randomized transactions
+
+### Driver
+- Drives interface using clocking block
+- Uses semaphore for bus control
+
+### Monitor
+- Passively observes read transactions
+
+### Scoreboard
+- Maintains cycle-accurate reference model
+- Mirrors RTL behavior
+- Checks expected vs actual data
+- Correctly models nonblocking counter behavior
 
 ---
 
-## Key Learning Outcomes
+# Synchronization Mechanisms Used
 
-- Understanding the structure and components of an SoC
-- Implementing memory-mapped communication
-- Designing register-based control logic
-- Integrating and verifying peripheral modules
-- Performing system-level functional verification using simulation
-- Debugging hardware behavior through waveform analysis
+- Mailbox (Generator → Driver)
+- Mailbox (Monitor → Scoreboard)
+- Semaphore (bus access control)
+- Event (transaction completion signaling)
+- Virtual Interface
+- Clocking block
+
+---
+
+# Simulation Output
+
+Simulation performed using Riviera-PRO (EDU Edition).
+
+Example output:
+ KERNEL: Read Addr=4 Data=0
+ KERNEL: Read Addr=8 Data=0
+ KERNEL: Read Addr=0 Data=0
+ KERNEL: Read Addr=4 Data=0
+ KERNEL: Read Addr=8 Data=0
+ KERNEL: Read Addr=8 Data=0
+ KERNEL: Read Addr=4 Data=f
+ KERNEL: Read Addr=0 Data=c1429199
+ KERNEL: Read Addr=4 Data=f
+ KERNEL: Read Addr=4 Data=f
+ KERNEL: Read Addr=0 Data=c1429199
+ KERNEL: Read Addr=8 Data=6
+ KERNEL: Read Addr=c Data=f8
+ KERNEL: Read Addr=4 Data=f
+ KERNEL: Read Addr=c Data=f8
+ RUNTIME: Info: RUNTIME_0068 testbench.sv (309): $finish called.
+
+ 
+No mismatches were reported during simulation.
 
 ---
 
-## Conclusion
+# Key Technical Learnings
 
-This mini SoC project demonstrates how multiple RTL blocks can be integrated into a cohesive system using simple, well-defined communication mechanisms. By focusing on clarity and correctness, the project provides a solid foundation for understanding larger and more complex SoC architectures and verification methodologies.
+- Memory-mapped register design
+- Address decoding
+- Sequential vs combinational logic partitioning
+- Constrained random stimulus generation
+- Thread-safe communication using mailboxes
+- Resource protection using semaphores
+- Cycle-accurate scoreboard modeling
+- Handling nonblocking assignment timing in reference models
 
 ---
+
+# Tools Used
+
+- SystemVerilog
+- Riviera-PRO Simulator
+- ModelSim-compatible simulation structure
+
+---
+
+# Project Structure
+design.sv → Interface + Mini SoC RTL
+testbench.sv → Layered Verification Environment
+README.md → Documentation
 
