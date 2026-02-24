@@ -1,6 +1,6 @@
 // ============================================================
 // testbench.sv
-// Final Stable Mini SoC Layered Testbench
+//Mini SoC Layered Testbench
 // ============================================================
 
 `timescale 1ns/1ns
